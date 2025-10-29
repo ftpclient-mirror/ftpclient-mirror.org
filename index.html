@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <meta name="description" content="Unofficial FileZilla software mirror. Download FTP client binaries for Windows, Linux, and macOS.">
+    <meta name="keywords" content="FileZilla, FTP client, mirror, download, Windows, Linux, macOS">
+
+    <meta property="og:title" content="FTP Client Mirror">
+    <meta property="og:description" content="Unofficial FileZilla software mirror. Download FTP client binaries for Windows, Linux, and macOS.">
+    <meta property="og:type" content="website">
+    <meta property="og:url" content="https://ftpclient-mirror.org">
+    <meta property="og:image" content="https://ftpclient-mirror.org/logo.webp">
+
+    <title>FTP Client Mirror</title>
+    <link rel="icon" type="image/webp" href="logo.webp">
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            line-height: 1.6;
+            color: #333;
+            background: #f5f5f5;
+            padding: 2rem 1rem;
+        }
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            padding-top: 2rem;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            padding-bottom: 1.3rem;
+            border-radius: 8px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .header {
+            text-align: center;
+            margin-bottom: 1rem;
+        }
+        .logo {
+            max-width: 200px;
+            margin-bottom: 0.1rem;
+        }
+        .version {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .disclaimer {
+            background: #fff3cd;
+            border-bottom: 4px solid #ffc107;
+            text-align: center;
+            padding: 1rem;
+            margin-bottom: 0.1rem;
+            border-radius: 4px;
+            font-size: 0.9rem;
+        }
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        th {
+            background: #2c3e50;
+            color: white;
+            padding: 0.75rem;
+            text-align: left;
+            font-weight: 600;
+        }
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e0e0e0;
+        }
+        tr:hover {
+            background: #f8f9fa;
+        }
+        a {
+            color: #3498db;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+        .checksum {
+            color: #7f8c8d;
+            font-size: 0.9rem;
+            margin-left: 0.5rem;
+        }
+        .loading {
+            text-align: center;
+            padding-left: 2rem;
+            padding-right: 2rem;
+            padding-top: 1rem;
+            padding-bottom: 1rem;
+            color: #7f8c8d;
+        }
+        footer {
+            text-align: center;
+            color: #7f8c8d;
+            font-size: 0.85rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <img src="logo.webp" alt="FTP Client Mirror" class="logo">
+            <div class="version" id="version">Loading...</div>
+        </div>
+
+        <div class="disclaimer">
+            <strong>Unofficial Mirror</strong> —
+            This page is not affiliated with the FileZilla project.
+        </div>
+
+        <div id="content" class="loading">
+            Loading...
+        </div>
+
+        <footer>
+            ftpclient-mirror.org | 2025
+        </footer>
+    </div>
+
+    <script>
+        const CDN_URL = 'https://cdn.ftpclient-mirror.org';
+
+        async function loadMirror() {
+            try {
+                const response = await fetch(`${CDN_URL}/latest.json`);
+                const data = await response.json();
+
+                document.getElementById('version').textContent =
+                    `Version ${data.version} • ${data.date}`;
+
+                const content = document.getElementById('content');
+                content.innerHTML = '';
+
+                const table = document.createElement('table');
+
+                // Windows
+                table.appendChild(createSection('Windows', [
+                    { name: 'Windows 64-bit Setup (.exe)', path: data.files.windows.win64_setup },
+                    { name: 'Windows 64-bit Portable (.zip)', path: data.files.windows.win64_zip },
+                    { name: 'Windows 32-bit Setup (.exe)', path: data.files.windows.win32_setup },
+                    { name: 'Windows 32-bit Portable (.zip)', path: data.files.windows.win32_zip }
+                ]));
+
+                // Linux
+                table.appendChild(createSection('Linux', [
+                    { name: 'Linux x86_64 (.tar.xz)', path: data.files.linux.x86_64 },
+                    { name: 'Linux i686 (.tar.xz)', path: data.files.linux.i686 }
+                ]));
+
+                // macOS
+                table.appendChild(createSection('macOS', [
+                    { name: 'macOS ARM64 (Apple Silicon)', path: data.files.macos.arm64 },
+                    { name: 'macOS x86 (Intel)', path: data.files.macos.x86 }
+                ]));
+
+                // Source
+                table.appendChild(createSection('Source', [
+                    { name: 'Source Code', path: data.files.source },
+                    { name: 'SHA512 Checksums', path: data.checksums.sha512 }
+                ]));
+
+                content.appendChild(table);
+
+            } catch (error) {
+                document.getElementById('content').innerHTML =
+                    '<p style="color: red; text-align: center;">Failed to load data.</p>';
+                console.error('Error:', error);
+            }
+        }
+
+        function createSection(title, files) {
+            const fragment = document.createDocumentFragment();
+
+            // Section header
+            const headerRow = document.createElement('tr');
+            const headerCell = document.createElement('th');
+            headerCell.textContent = title;
+            headerRow.appendChild(headerCell);
+            fragment.appendChild(headerRow);
+
+            // File rows
+            files.forEach(file => {
+                const row = document.createElement('tr');
+                const cell = document.createElement('td');
+
+                const link = document.createElement('a');
+                link.href = `${CDN_URL}/${file.path}`;
+                link.textContent = file.name;
+                cell.appendChild(link);
+
+                const checksumLink = document.createElement('a');
+                checksumLink.href = `${CDN_URL}/${file.path}.sha256sum`;
+                checksumLink.className = 'checksum';
+                checksumLink.textContent = '(checksum)';
+                cell.appendChild(checksumLink);
+
+                row.appendChild(cell);
+                fragment.appendChild(row);
+            });
+
+            return fragment;
+        }
+
+        loadMirror();
+    </script>
+</body>
+</html>
