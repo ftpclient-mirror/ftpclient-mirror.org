@@ -100,6 +100,27 @@
             color: #7f8c8d;
             font-size: 0.85rem;
         }
+        
+        @media (max-width: 768px) {
+            body {
+                padding: 0.5rem;
+            }
+            .container {
+                padding-left: 0.8rem;
+                padding-right: 0.8rem;
+                padding-top: 1.2rem;
+                padding-bottom: 1rem;
+            }
+            th, td {
+                padding: 0.5rem;
+                font-size: 0.9rem;
+            }
+            .checksum {
+                display: block;
+                margin-left: 0;
+                margin-top: 0.25rem;
+            }
+        }
     </style>
 </head>
 <body>
@@ -139,7 +160,6 @@
 
                 const table = document.createElement('table');
 
-                // Windows
                 table.appendChild(createSection('Windows', [
                     { name: 'Windows 64-bit Setup (.exe)', path: data.files.windows.win64_setup },
                     { name: 'Windows 64-bit Portable (.zip)', path: data.files.windows.win64_zip },
@@ -147,19 +167,16 @@
                     { name: 'Windows 32-bit Portable (.zip)', path: data.files.windows.win32_zip }
                 ]));
 
-                // Linux
                 table.appendChild(createSection('Linux', [
                     { name: 'Linux x86_64 (.tar.xz)', path: data.files.linux.x86_64 },
                     { name: 'Linux i686 (.tar.xz)', path: data.files.linux.i686 }
                 ]));
 
-                // macOS
                 table.appendChild(createSection('macOS', [
                     { name: 'macOS ARM64 (Apple Silicon)', path: data.files.macos.arm64 },
                     { name: 'macOS x86 (Intel)', path: data.files.macos.x86 }
                 ]));
 
-                // Source
                 table.appendChild(createSection('Source', [
                     { name: 'Source Code', path: data.files.source },
                     { name: 'SHA512 Checksums', path: data.checksums.sha512 }
@@ -177,14 +194,12 @@
         function createSection(title, files) {
             const fragment = document.createDocumentFragment();
 
-            // Section header
             const headerRow = document.createElement('tr');
             const headerCell = document.createElement('th');
             headerCell.textContent = title;
             headerRow.appendChild(headerCell);
             fragment.appendChild(headerRow);
 
-            // File rows
             files.forEach(file => {
                 const row = document.createElement('tr');
                 const cell = document.createElement('td');
