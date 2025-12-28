@@ -7,13 +7,14 @@
     <meta name="description" content="Unofficial FileZilla software mirror. Download FTP client binaries for Windows, Linux, and macOS.">
     <meta name="keywords" content="FileZilla, FTP client, mirror, download, Windows, Linux, macOS">
 
-    <meta property="og:title" content="FTP Client Mirror">
+    <meta property="og:title" content="FTP Client Mirror - Download FileZilla for Windows, Linux, macOS">
     <meta property="og:description" content="Unofficial FileZilla software mirror. Download FTP client binaries for Windows, Linux, and macOS.">
     <meta property="og:type" content="website">
     <meta property="og:url" content="https://ftpclient-mirror.org">
     <meta property="og:image" content="https://ftpclient-mirror.org/logo.webp">
 
-    <title>FTP Client Mirror</title>
+    <title>FTP Client Mirror - Download FileZilla, a Free FTP Client for Windows, Linux, macOS</title>
+    <link rel="canonical" href="https://ftpclient-mirror.org">
     <link rel="icon" type="image/webp" href="logo.webp">
     <style>
         :root {
@@ -134,7 +135,7 @@
             color: var(--text-tertiary);
             font-size: 0.85rem;
         }
-        
+
         @media (max-width: 768px) {
             body {
                 padding: 0.5rem;
@@ -181,6 +182,32 @@
     <script>
         const CDN_URL = 'https://cdn.ftpclient-mirror.org';
 
+        function loadStructuredData(data) {
+            const structuredData = {
+                "@context": "https://schema.org",
+                "@type": "SoftwareApplication",
+                "name": "FileZilla FTP Client",
+                "description": "Free FTP/SFTP/FTPS client for Windows, Linux, and macOS",
+                "operatingSystem": ["Windows", "Linux", "macOS"],
+                "applicationCategory": "UtilitiesApplication",
+                "applicationSubCategory": "FTP Client",
+                "keywords": "FTP, SFTP, FTPS, file transfer, remote files",
+                "softwareVersion": data.version,
+                "dateModified": data.date,
+                "downloadUrl": "https://ftpclient-mirror.org",
+                "offers": {
+                    "@type": "Offer",
+                    "price": "0",
+                    "priceCurrency": "USD"
+                }
+            };
+
+            const script = document.createElement('script');
+            script.type = 'application/ld+json';
+            script.textContent = JSON.stringify(structuredData);
+            document.head.appendChild(script);
+        }
+
         async function loadMirror() {
             try {
                 const response = await fetch(`${CDN_URL}/latest.json`);
@@ -188,6 +215,8 @@
 
                 document.getElementById('version').textContent =
                     `Version ${data.version} • ${data.date}`;
+
+                loadStructuredData(data);
 
                 const content = document.getElementById('content');
                 content.innerHTML = '';
